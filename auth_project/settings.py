@@ -162,3 +162,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_REDIRECT_URL = '/'
+
+import os
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = os.getenv("DEBUG") == 'True'
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
