@@ -26,6 +26,7 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.contrib.auth.decorators import login_required
 from .forms import UserUpdateForm, ProfileUpdateForm
+from .models import Profile 
 
 def home(request):
     return render(request, 'recipes/home.html')
@@ -35,7 +36,6 @@ def profile(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponse("Вы успешно вышли. Сейчас должен быть редирект на регистрацию.")
     return redirect('register')
 
 def login_view(request):
@@ -132,18 +132,16 @@ def profile_view(request):
 
 @login_required
 def edit_profile(request):
+    user = request.user
+
+    profile, created = Profile.objects.get_or_create(user=user)
+
     if request.method == 'POST':
-        user_form = UserUpdateForm(request.POST, instance=request.user)
-        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
+        if profile_form.is_valid():
             profile_form.save()
             return redirect('profile')
     else:
-        user_form = UserUpdateForm(instance=request.user)
-        profile_form = ProfileUpdateForm(instance=request.user.profile)
-    
-    return render(request, 'edit_profile.html', {
-        'user_form': user_form,
-        'profile_form': profile_form
-    })
+        profile_form = ProfileUpdateForm(instance=profile)
+
+    return render(request, 'authentication/edit_profile.html', {'profile_form': profile_form})

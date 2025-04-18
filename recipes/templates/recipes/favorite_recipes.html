@@ -1,24 +1,139 @@
-<h1>Избранные рецепты</h1>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Избранные рецепты</title>
+    <style>
+        /* Общие стили */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #FFF5E1; /* фон сайта */
+            margin: 0;
+            padding: 0;
+        }
 
-<table>
-    <thead>
-        <tr>
-            <th>Название</th>
-            <th>Описание</th>
-            <th>Перейти</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for favorite in favorites %}
+        h1 {
+            text-align: center;
+            color: #6D4C41; /* Заголовки */
+            margin: 20px 0;
+            font-size: 36px;
+        }
+
+        /* Таблица */
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            font-size: 18px;
+        }
+
+        th {
+            background-color: #FFCC80;
+            color: #6D4C41; /* Заголовки таблицы */
+        }
+
+        td {
+            background-color: #FFFFFF; /* Карточки рецептов */
+            border: 1px solid #E0DCD3;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        td a {
+            color: #FFA726; /* Кнопки */
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        td a:hover {
+            text-decoration: underline;
+            color: #FF7043;
+        }
+
+        /* Сообщение об отсутствии рецептов */
+        .empty-message {
+            text-align: center;
+            font-size: 20px;
+            color: #6D4C41; /* Заголовки */
+            font-weight: bold;
+        }
+
+        /* Плавный переходы для кнопок */
+        .btn {
+            background-color: #FFA726;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #FF7043;
+            transform: scale(1.05);
+        }
+
+        /* Сообщения об успехе/ошибках */
+        .success-message {
+            background-color: #81C784;
+            color: #FFF;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .error-message {
+            background-color: #E57373;
+            color: #FFF;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Избранные рецепты</h1>
+
+    <!-- Сообщение об успехе/ошибке -->
+    {% if success_message %}
+        <div class="success-message">{{ success_message }}</div>
+    {% endif %}
+    {% if error_message %}
+        <div class="error-message">{{ error_message }}</div>
+    {% endif %}
+
+    <!-- Таблица избранных рецептов -->
+    <table>
+        <thead>
             <tr>
-                <td>{{ favorite.recipe.title }}</td>
-                <td>{{ favorite.recipe.description|truncatewords:10 }}</td>
-                <td><a href="{% url 'recipes:recipe_detail' favorite.recipe.id %}">Посмотреть</a></td>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Перейти</th>
             </tr>
-        {% empty %}
-            <tr>
-                <td colspan="3">У вас пока нет избранных рецептов.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {% for favorite in favorites %}
+                <tr>
+                    <td>{{ favorite.recipe.title }}</td>
+                    <td>{{ favorite.recipe.description|truncatewords:10 }}</td>
+                    <td><a href="{% url 'recipes:recipe_detail' favorite.recipe.id %}">Посмотреть</a></td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" class="empty-message">У вас пока нет избранных рецептов.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

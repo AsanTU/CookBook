@@ -1,11 +1,52 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Recipe, Rating, Favorite
+from .models import Recipe, Rating, Favorite, Category, Tag
 from .forms import RecipeForm, RatingForm, CommentForm
 from django.contrib.auth.decorators import login_required
+from django.db.models import Avg
 
 def recipe_list(request):
     recipes = Recipe.objects.all()
-    return render(request, 'recipes/home.html', {'recipes': recipes})
+
+    # Поиск по названию
+    query = request.GET.get('q')
+    if query:
+        recipes = recipes.filter(title__icontains=query)
+
+    # Фильтрация по категории
+    category_filter = request.GET.get('category')
+    if category_filter:
+        recipes = recipes.filter(category__id=category_filter)
+
+    # Фильтрация по тегам
+    tag_filter = request.GET.get('tag')
+    if tag_filter:
+        recipes = recipes.filter(tags__id=tag_filter)
+
+    # Фильтрация по автору
+    author_filter = request.GET.get('author')
+    if author_filter:
+        recipes = recipes.filter(author__username__icontains=author_filter)
+
+    # Фильтрация по рейтингу
+    rating_filter = request.GET.get('rating')
+    if rating_filter:
+        # Фильтрация с использованием агрегации для среднего рейтинга
+        recipes = recipes.annotate(average_rating=Avg('ratings__value')).filter(average_rating__gte=rating_filter)
+
+    # Получаем список категорий и тегов для отображения в фильтре
+    categories = Category.objects.all()
+    tags = Tag.objects.all()
+
+    return render(request, 'recipes/home.html', {
+        'recipes': recipes,
+        'categories': categories,
+        'tags': tags,
+        'query': query,
+        'category_filter': category_filter,
+        'tag_filter': tag_filter,
+        'author_filter': author_filter,
+        'rating_filter': rating_filter,
+    })
 
 @login_required
 def add_recipe(request):
@@ -51,7 +92,8 @@ def delete_recipe(request, recipe_id):
 
 def recipe_detail(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    
+
+    # Проверка на наличие рецепта в избранном у текущего пользователя
     is_favorite = False
     if request.user.is_authenticated:
         is_favorite = recipe.favorite_set.filter(user=request.user).exists()
@@ -63,7 +105,7 @@ def recipe_detail(request, recipe_id):
         if comment_form.is_valid() and rating_form.is_valid():
             comment = comment_form.save(commit=False)
             comment.recipe = recipe  
-            comment.user = request.user  
+            comment.user = request.user if request.user.is_authenticated else None  # Если пользователь анонимный, оставляем поле пустым
             comment.save() 
             
             rating_value = rating_form.cleaned_data['value']
@@ -80,7 +122,9 @@ def recipe_detail(request, recipe_id):
         'comment_form': comment_form,
         'rating_form': rating_form,
         'is_favorite': is_favorite,
+        'rating_range': range(5, 0, -1),  
     }
+
     return render(request, 'recipes/recipe_detail.html', context)
 
 def rate_recipe(request, recipe_id):
@@ -100,7 +144,7 @@ def rate_recipe(request, recipe_id):
 @login_required
 def toggle_favorite(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    
+
     favorite, created = Favorite.objects.get_or_create(user=request.user, recipe=recipe)
     if not created:
         favorite.delete()

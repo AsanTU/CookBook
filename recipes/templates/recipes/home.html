@@ -5,6 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Главная страница</title>
     <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #FFF5E1; /* фон сайта */
+            margin: 0;
+            padding: 0;
+        }
+
+        .filter-form {
+            background-color: #FFFFFF;
+            padding: 20px;
+            margin-top: 30px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 60%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .filter-form input, .filter-form select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #E0DCD3;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #6D4C41;
+            background-color: #FFF;
+        }
+
+        .filter-form input[type="number"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        .filter-form button {
+            background-color: #FFA726; /* кнопка по умолчанию */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            width: 100%;
+        }
+
+        .filter-form button:hover {
+            background-color: #FF7043; /* кнопка при наведении */
+            transform: scale(1.05);
+        }
+
+        /* Заголовок формы */
+        .filter-form h2 {
+            color: #6D4C41;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
 .add-recipe-btn {
         display: inline-block;
         background-color: #FFA726;
@@ -130,10 +189,39 @@ body {
             <a href="/auth/login/">Войти</a>
         </nav>
         <main class="container">
-            {% if user.is_authenticated %}
-    <a href="{% url 'recipes:add_recipe' %}" class="add-recipe-btn">➕ Добавить рецепт</a>
-{% endif %}
-                {% if recipes %}
+            <div class="filter-form">
+                <h2>Фильтрация рецептов</h2>
+                <form method="get">
+                    <!-- Поиск по названию -->
+                    <input type="text" name="q" placeholder="Поиск по названию" value="{{ query }}">
+        
+                    <!-- Фильтрация по категориям -->
+                    <select name="category">
+                        <option value="">Все категории</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if category.id == category_filter %}selected{% endif %}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+        
+                    <!-- Фильтрация по тегам -->
+                    <select name="tag">
+                        <option value="">Все теги</option>
+                        {% for tag in tags %}
+                            <option value="{{ tag.id }}" {% if tag.id == tag_filter %}selected{% endif %}>{{ tag.name }}</option>
+                        {% endfor %}
+                    </select>
+        
+                    <!-- Фильтрация по автору -->
+                    <input type="text" name="author" placeholder="Поиск по автору" value="{{ author_filter }}">
+        
+                    <!-- Фильтрация по рейтингу -->
+                    <input type="number" name="rating" placeholder="Минимальный рейтинг" value="{{ rating_filter }}" min="0" max="5">
+        
+                    <button type="submit">Поиск</button>
+                </form>
+            </div>
+
+            {% if recipes %}
                 <h2>Список рецептов</h2>
                 <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
                     <thead>
@@ -146,6 +234,7 @@ body {
                             <th style="padding: 10px; border: 1px solid #E0DCD3;">Фото</th>
                             <th style="padding: 10px; border: 1px solid #E0DCD3;">Категория</th>
                             <th style="padding: 10px; border: 1px solid #E0DCD3;">Теги</th>
+                            <th style="padding: 10px; border: 1px solid #E0DCD3;">Рейтинг</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -190,26 +279,27 @@ body {
                                 </td>
                                 <td style="padding: 10px; border: 1px solid #E0DCD3;">
                                     {% if user.is_authenticated %}
-                                        <a href="{% url 'recipes:recipe_detail' recipe.id %}" style="color: #007BFF;">Оценить и прокомментировать</a>
+                                        <a href="{% url 'recipes:recipe_detail' recipe.id %}">⭐💬</a>
                                     {% else %}
                                         Для оценки и комментария необходимо <a href="{% url 'login' %}">войти</a>.
                                     {% endif %}
-                                </td>                                                              
+                                </td>  
                                 <td style="padding: 10px; border: 1px solid #E0DCD3;">
                                     {% if user == recipe.author %}
-                                        <a href="{% url 'recipes:edit_recipe' recipe.id %}" style="margin-right: 10px;">Редактировать</a>
-                                        <a href="{% url 'recipes:delete_recipe' recipe.id %}" style="color: red;">Удалить</a>
+                                        <a href="{% url 'recipes:edit_recipe' recipe.id %}" style="margin-right: 10px;">✏️</a>
+                                        <a href="{% url 'recipes:delete_recipe' recipe.id %}" >🗑️</a>
                                     {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>                
-                {% else %}
-                    <p>Рецептов пока нет.</p>
-                {% endif %}
+            {% else %}
+                <p>Рецептов не найдено по вашему запросу.</p>
+            {% endif %}
        </main>
     </div>
 </body>
+
 
 </html>
