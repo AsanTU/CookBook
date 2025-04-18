@@ -182,6 +182,20 @@ body {
                                     {% endif %}
                                 </td>
                                 <td style="padding: 10px; border: 1px solid #E0DCD3;">
+                                    {% if recipe.average_rating %}
+                                        {{ recipe.average_rating }} ★
+                                    {% else %}
+                                        Нет оценок
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 10px; border: 1px solid #E0DCD3;">
+                                    {% if user.is_authenticated %}
+                                        <a href="{% url 'recipes:recipe_detail' recipe.id %}" style="color: #007BFF;">Оценить и прокомментировать</a>
+                                    {% else %}
+                                        Для оценки и комментария необходимо <a href="{% url 'login' %}">войти</a>.
+                                    {% endif %}
+                                </td>                                                              
+                                <td style="padding: 10px; border: 1px solid #E0DCD3;">
                                     {% if user == recipe.author %}
                                         <a href="{% url 'recipes:edit_recipe' recipe.id %}" style="margin-right: 10px;">Редактировать</a>
                                         <a href="{% url 'recipes:delete_recipe' recipe.id %}" style="color: red;">Удалить</a>

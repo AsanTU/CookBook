@@ -1,0 +1,29 @@
+<h2>{{ recipe.title }}</h2>
+<p>{{ recipe.description }}</p>
+
+<div>
+    <h3>Комментарии:</h3>
+    {% for comment in recipe.comments.all %}
+        <div>
+            <p><strong>{{ comment.user.username }}</strong> ({{ comment.created_at }})</p>
+            <p>{{ comment.content }}</p>
+        </div>
+    {% empty %}
+        <p>Комментариев пока нет.</p>
+    {% endfor %}
+</div>
+
+{% if user.is_authenticated %}
+    <h3>Оставьте комментарий и оценку:</h3>
+    <form method="post">
+        {% csrf_token %}
+        
+        {{ comment_form.as_p }}
+        
+        {{ rating_form.as_p }}
+        
+        <button type="submit">Отправить</button>
+    </form>
+{% else %}
+    <p>Для того чтобы оставить комментарий и оценку, необходимо <a href="{% url 'login' %}">войти</a>.</p>
+{% endif %}
