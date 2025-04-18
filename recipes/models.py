@@ -49,3 +49,13 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Комментарий от {self.user.username} к рецепту {self.recipe.title}'
+    
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'recipe')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.recipe.title}"

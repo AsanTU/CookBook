@@ -1,0 +1,24 @@
+<h1>Избранные рецепты</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Перейти</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for favorite in favorites %}
+            <tr>
+                <td>{{ favorite.recipe.title }}</td>
+                <td>{{ favorite.recipe.description|truncatewords:10 }}</td>
+                <td><a href="{% url 'recipes:recipe_detail' favorite.recipe.id %}">Посмотреть</a></td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="3">У вас пока нет избранных рецептов.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

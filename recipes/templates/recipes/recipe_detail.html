@@ -17,13 +17,23 @@
     <h3>Оставьте комментарий и оценку:</h3>
     <form method="post">
         {% csrf_token %}
-        
         {{ comment_form.as_p }}
-        
         {{ rating_form.as_p }}
-        
         <button type="submit">Отправить</button>
     </form>
+
+    {% if is_favorite %}
+        <form method="post" action="{% url 'recipes:toggle_favorite' recipe.id %}">
+            {% csrf_token %}
+            <button type="submit">Удалить из избранного</button>
+        </form>
+    {% else %}
+        <form method="post" action="{% url 'recipes:toggle_favorite' recipe.id %}">
+            {% csrf_token %}
+            <button type="submit">Добавить в избранное</button>
+        </form>
+    {% endif %}
+
 {% else %}
     <p>Для того чтобы оставить комментарий и оценку, необходимо <a href="{% url 'login' %}">войти</a>.</p>
 {% endif %}

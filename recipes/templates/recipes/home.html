@@ -124,7 +124,7 @@ body {
     <div class="wrapper">
         <nav class="sidebar">
             <h2>Меню</h2>
-            <a href="/">Главная</a>
+            <a href="{% url 'recipes:favorite_recipes' %}">Избранное</a>
             <a href="/recipes/">Рецепты</a>
             <a href="/auth/profile/">Профиль</a>
             <a href="/auth/login/">Войти</a>

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Recipe, Rating
+from .models import Recipe, Rating, Favorite
 from .forms import RecipeForm, RatingForm, CommentForm
 from django.contrib.auth.decorators import login_required
 
@@ -52,6 +52,10 @@ def delete_recipe(request, recipe_id):
 def recipe_detail(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     
+    is_favorite = False
+    if request.user.is_authenticated:
+        is_favorite = recipe.favorite_set.filter(user=request.user).exists()
+
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
         rating_form = RatingForm(request.POST)
@@ -71,7 +75,13 @@ def recipe_detail(request, recipe_id):
         comment_form = CommentForm()
         rating_form = RatingForm()
 
-    return render(request, 'recipes/recipe_detail.html', {'recipe': recipe, 'comment_form': comment_form, 'rating_form': rating_form})
+    context = {
+        'recipe': recipe,
+        'comment_form': comment_form,
+        'rating_form': rating_form,
+        'is_favorite': is_favorite,
+    }
+    return render(request, 'recipes/recipe_detail.html', context)
 
 def rate_recipe(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
@@ -86,3 +96,18 @@ def rate_recipe(request, recipe_id):
         form = RatingForm()
 
     return render(request, 'recipes/rate_recipe.html', {'form': form, 'recipe': recipe})
+
+@login_required
+def toggle_favorite(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    
+    favorite, created = Favorite.objects.get_or_create(user=request.user, recipe=recipe)
+    if not created:
+        favorite.delete()
+
+    return redirect('recipes:recipe_detail', recipe_id=recipe.id)
+
+@login_required
+def favorite_recipes(request):
+    favorites = Favorite.objects.filter(user=request.user).select_related('recipe')
+    return render(request, 'recipes/favorite_recipes.html', {'favorites': favorites})
