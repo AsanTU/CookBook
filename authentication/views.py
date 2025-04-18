@@ -24,16 +24,19 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.contrib.auth.decorators import login_required
+from .forms import UserUpdateForm, ProfileUpdateForm
 
 def home(request):
-    return render(request, 'home.html')
+    return render(request, 'recipes/home.html')
 
 def profile(request):
     return render(request, 'profile.html')
 
 def logout_view(request):
     logout(request)
-    return redirect('home') 
+    return HttpResponse("Вы успешно вышли. Сейчас должен быть редирект на регистрацию.")
+    return redirect('register')
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -76,7 +79,7 @@ def password_reset_request(request):
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
                 
                 domain = request.get_host()  
-                reset_url = f"http://{domain}/reset-password-confirm/{uid}/{token}/"
+                reset_url = f"http://{domain}/auth/reset-password-confirm/{uid}/{token}/"
 
                 message = render_to_string("password_reset_email.html", {
                     "user": user,
@@ -122,3 +125,25 @@ def password_reset_confirm(request, uidb64, token):
     else:
         messages.error(request, "Ссылка сброса недействительна.")
         return redirect("password_reset")
+
+@login_required
+def profile_view(request):
+    return render(request, 'profile.html')
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect('profile')
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
+    
+    return render(request, 'edit_profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })

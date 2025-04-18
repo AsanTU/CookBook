@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выход</title>
+</head>
+<body>
+    <h1>Вы уверены, что хотите выйти?</h1>
+    <p>Выход из аккаунта приведет к завершению вашей сессии.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Выйти</button>
+    </form>
+    <a href="/">На главную</a>
+</body>
+</html>

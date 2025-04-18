@@ -29,14 +29,23 @@
             animation: fadeIn 0.8s ease-in-out;
         }
 
+        .avatar {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #FFA726;
+            margin-bottom: 20px;
+        }
+
         h1 {
             font-size: 32px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         p {
             font-size: 18px;
-            margin: 12px 0;
+            margin: 8px 0;
         }
 
         .profile-links {
@@ -80,15 +89,21 @@
 </head>
 <body>
     <div class="profile-card">
-        <h1>Профиль пользователя</h1>
-        <p>Привет, <strong>{{ user.username }}</strong>!</p>
+        {% if user.profile.avatar %}
+            <img src="{{ user.profile.avatar.url }}" alt="Аватар" class="avatar">
+        {% endif %}
+        <h1>{{ user.username }}</h1>
         <p>Email: {{ user.email }}</p>
         <p>Дата регистрации: {{ user.date_joined|date:"d.m.Y H:i" }}</p>
 
         <div class="profile-links">
             <a href="{% url 'home' %}">На главную</a>
-            <a href="{% url 'logout' %}">Выйти</a>
-        </div>
+            <a href="{% url 'edit_profile' %}">Редактировать</a>
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit">Выйти</button>
+            </form>
+        </div>        
     </div>
 </body>
 </html>
