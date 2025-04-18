@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Удалить рецепт</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #FFF5E1;
+            margin: 0;
+            padding: 0;
+        }
+
+        .delete-container {
+            max-width: 600px;
+            margin: 100px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            border: 1px solid #E0DCD3;
+        }
+
+        h2 {
+            color: #D32F2F;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #6D4C41;
+            margin-bottom: 30px;
+        }
+
+        .btn-delete {
+            background-color: #D32F2F;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            margin-right: 15px;
+        }
+
+        .btn-delete:hover {
+            background-color: #B71C1C;
+            transform: scale(1.03);
+        }
+
+        .btn-cancel {
+            background-color: #E0DCD3;
+            color: #6D4C41;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background-color: #D7CCC8;
+            transform: scale(1.03);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="delete-container">
+        <h2>Удалить рецепт</h2>
+
+        <p>Вы уверены, что хотите удалить рецепт "{{ recipe.title }}"?</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn-delete">Удалить</button>
+            <a href="{% url 'recipes:home' %}" class="btn-cancel">Отмена</a>
+        </form>
+    </div>
+
+</body>
+</html>

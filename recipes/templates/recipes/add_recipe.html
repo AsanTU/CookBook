@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить рецепт</title>
+    <style>
+        body {
+            background-color: #FFF5E1;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+            color: #6D4C41;
+        }
+
+        .form-container {
+            background-color: #FFFFFF;
+            border: 2px solid #E0DCD3;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid #E0DCD3;
+        }
+
+        button {
+            background-color: #FFA726;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #FB8C00;
+        }
+
+        a.back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #6D4C41;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Создать рецепт</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Сохранить</button>
+        </form>
+        <a class="back-link" href="{% url 'home' %}">← Назад к рецептам</a>
+    </div>
+</body>
+</html>
