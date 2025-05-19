@@ -64,6 +64,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'asantursunaliev0606@gmail.com'
 EMAIL_HOST_PASSWORD = 'wxrq mral nulh kaah'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 SITE_ID = 6
 

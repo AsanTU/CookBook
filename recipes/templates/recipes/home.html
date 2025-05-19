@@ -189,37 +189,7 @@ body {
             <a href="/auth/login/">Войти</a>
         </nav>
         <main class="container">
-            <div class="filter-form">
-                <h2>Фильтрация рецептов</h2>
-                <form method="get">
-                    <!-- Поиск по названию -->
-                    <input type="text" name="q" placeholder="Поиск по названию" value="{{ query }}">
-        
-                    <!-- Фильтрация по категориям -->
-                    <select name="category">
-                        <option value="">Все категории</option>
-                        {% for category in categories %}
-                            <option value="{{ category.id }}" {% if category.id == category_filter %}selected{% endif %}>{{ category.name }}</option>
-                        {% endfor %}
-                    </select>
-        
-                    <!-- Фильтрация по тегам -->
-                    <select name="tag">
-                        <option value="">Все теги</option>
-                        {% for tag in tags %}
-                            <option value="{{ tag.id }}" {% if tag.id == tag_filter %}selected{% endif %}>{{ tag.name }}</option>
-                        {% endfor %}
-                    </select>
-        
-                    <!-- Фильтрация по автору -->
-                    <input type="text" name="author" placeholder="Поиск по автору" value="{{ author_filter }}">
-        
-                    <!-- Фильтрация по рейтингу -->
-                    <input type="number" name="rating" placeholder="Минимальный рейтинг" value="{{ rating_filter }}" min="0" max="5">
-        
-                    <button type="submit">Поиск</button>
-                </form>
-            </div>
+            <a href="{% url 'recipes:add_recipe' %}" class="add-recipe-btn">Добавить рецепт</a> <!-- Кнопка -->
 
             {% if recipes %}
                 <h2>Список рецептов</h2>
